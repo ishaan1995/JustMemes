@@ -1,6 +1,13 @@
-# test_insta_memes
+# Just Memes
 
 A new Flutter project.
+
+TODO:
+- Basic 1 small poc done.
+- Read around instagram api - how to connect, get feed of channels (28 April, 2020)
+- Get a name, logo some design help from saurav if required.
+- Public an mvp on store - get feed of memes based on topics - small apk. experiment with the market (2-3 rd May 2020 launch).
+- Connect to facebook, 9gag, other memes sites or scrap - later on based on outcome.
 
 ## Getting Started
 
