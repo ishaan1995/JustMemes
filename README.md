@@ -2,6 +2,8 @@
 
 A new Flutter project.
 
+![](art/just_memes_demo.gif "Demo")
+
 TODO:
 - Basic 1 small poc done.
 - Read around instagram api - how to connect, get feed of channels (28 April, 2020)
