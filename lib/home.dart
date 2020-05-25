@@ -16,13 +16,38 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Map<String, dynamic> homePageState;
 
+  Color getBackgroundColor() {
+    if (homePageState['theme'] == 'dark') {
+      return Colors.black;
+    } else {
+      return Colors.white;
+    }
+  }
+
+  Color getTextColor() {
+    if (homePageState['theme'] == 'dark') {
+      return Colors.white;
+    } else {
+      return Colors.black;
+    }
+  }
+
+  Color getLightTextColor() {
+    if (homePageState['theme'] == 'dark') {
+      return Colors.grey;
+    } else {
+      return Colors.grey;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
     homePageState = {
       'index': 0,
-      'posts': widget.posts
+      'posts': widget.posts,
+      'theme': 'light'
     };
 
     // we just have 24 posts, push more posts here.
@@ -141,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Text(
                     post.username,
-                    style: TextStyle(fontSize: 16.0),
+                    style: TextStyle(fontSize: 16.0, color: getTextColor()),
                   ),
                 ],
               ),
@@ -165,16 +190,30 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: 'Best of Memes 🔥'.toAppBar(centerTitle: true),
+      backgroundColor: getBackgroundColor(),
+      appBar: 'Best of Memes 🔥'.toAppBar(centerTitle: true, textColor: getTextColor()),
       body: Stack(
         children: [
-          _getBody(),
+          InkWell(
+            onDoubleTap: () {
+              setState(() {
+                String currentTheme = homePageState['theme'];
+                if (currentTheme == 'dark') {
+                  homePageState['theme'] = 'light';
+                } else {
+                  homePageState['theme'] = 'dark';
+                }
+                
+              });
+            },
+            child: _getBody(),
+          ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                'Powered by'.lightText(fontSize: 20.0),
+                'Powered by'.lightText(fontSize: 20.0, textColor: getLightTextColor()),
                 Padding(padding: EdgeInsets.all(4.0)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -185,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 16.0,
                     ),
                     Padding(padding: EdgeInsets.all(4.0),),
-                    'Instagram'.lightText(fontSize: 12.0),
+                    'Instagram'.lightText(fontSize: 12.0, textColor: getLightTextColor()),
                   ],
                 ),
                 Padding(padding: EdgeInsets.all(16.0))
