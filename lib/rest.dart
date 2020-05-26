@@ -9,7 +9,21 @@ const SUFFIX = "?__a=1";
 // TODO: add post account image, name, link to instagram methods
 
 List<String> getIGUsersList() {
-  return ['sarcastic_us', 'diddle.app'];
+  return [
+    'official.desimeme',
+    'theironicalbaba',
+  ];
+}
+
+List<String> getRestIGUsersList() {
+  return [
+    'sarcastic_us',
+    'bewakoofofficial',
+    'thedopeindian',
+    'thedesistuff',
+    'diddle.app',
+    'thememebaba',
+  ];
 }
 
 extension on int {
@@ -18,12 +32,17 @@ extension on int {
   }
 }
 
-Future<List<Post>> getPosts() async {
-  List<String> userList = getIGUsersList();
-  //List<String> userList = ['sarcastic_us'];
+Future<List<Post>> getPosts({List<String> userList}) async {
+  if (userList == null) {
+    userList = getIGUsersList();
+  }
   List<Post> globalPosts = [];
 
   for (var user in userList) {
+
+    // randomly shuffle posts.
+    globalPosts.shuffle();
+
     String url = '$BASE_URL/$user/$SUFFIX';
     print('get request on url: $url');
     var response = await http.get(url);
@@ -44,10 +63,13 @@ Future<List<Post>> getPosts() async {
 
         bool isVideo = node['is_video'];
 
+        String shareCode = node['shortcode'];
+
         if (!isVideo) {
           Post post = Post(
               imageLink: node['display_url'],
               username: username,
+              shareCode: shareCode,
               userProfileImageLink: userProfileImageLink,
               likedCount: node['edge_liked_by']['count'],
               thumbnail: node['thumbnail_src']);
@@ -59,6 +81,7 @@ Future<List<Post>> getPosts() async {
     }
   }
 
+  globalPosts.shuffle();
   return globalPosts;
 }
 
@@ -69,11 +92,13 @@ class Post {
   String userProfileImageLink;
   String caption;
   int likedCount;
+  String shareCode;
 
   Post({
     @required this.imageLink,
     @required this.username,
     @required this.userProfileImageLink,
+    @required this.shareCode,
     this.caption,
     this.likedCount,
     this.thumbnail,
@@ -85,6 +110,7 @@ class Post {
       'imageLink': imageLink,
       'thumbnail': thumbnail,
       'username': username,
+      'shareCode': shareCode,
       'userProfileImageLink': userProfileImageLink,
       'caption': caption,
       'likedCount': likedCount,
