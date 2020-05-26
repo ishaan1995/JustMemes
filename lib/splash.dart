@@ -47,6 +47,7 @@ class _SplashPageState extends State<SplashPage> {
     bool isError = splashState['isError'];
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Container(
         child: Center(
           child: isError
