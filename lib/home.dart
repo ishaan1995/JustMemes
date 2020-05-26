@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
     homePageState = {
       'index': 0,
       'posts': widget.posts,
-      'theme': 'light'
+      'theme': 'dark'
     };
 
     // we just have 24 posts, push more posts here.

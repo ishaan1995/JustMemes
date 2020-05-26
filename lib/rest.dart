@@ -10,16 +10,16 @@ const SUFFIX = "?__a=1";
 
 List<String> getIGUsersList() {
   return [
-    'thedopeindian',
     'official.desimeme',
+    'theironicalbaba',
   ];
 }
 
 List<String> getRestIGUsersList() {
   return [
     'sarcastic_us',
-    'theironicalbaba',
     'bewakoofofficial',
+    'thedopeindian',
     'thedesistuff',
     'diddle.app',
     'thememebaba',
@@ -80,6 +80,8 @@ Future<List<Post>> getPosts({List<String> userList}) async {
       }
     }
   }
+
+  globalPosts.shuffle();
   return globalPosts;
 }
 
