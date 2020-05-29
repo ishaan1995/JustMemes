@@ -66,19 +66,29 @@ class _MyHomePageState extends State<MyHomePage>
       ),
     );
 
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        homePageState['showTutorial'] = true;
-      });
-      controller.repeat(period: Duration(seconds: 2));
-    });
+    showTutorial().then((showTutorial) {
 
-    Future.delayed(Duration(seconds: 8), () {
-      controller.forward(from: 0);
-      controller.stop(canceled: true);
+      print('should show tutorial $showTutorial');
 
-      setState(() {
-        homePageState['showTutorial'] = false;
+      Future.delayed(Duration(seconds: 2), () {
+
+        setState(() {
+          homePageState['showTutorial'] = showTutorial;
+        });
+
+        if (showTutorial == true) {
+          controller.repeat(period: Duration(seconds: 2));
+
+          Future.delayed(Duration(seconds: 8), () {
+            controller.forward(from: 0);
+            controller.stop(canceled: true);
+
+            setState(() {
+              homePageState['showTutorial'] = false;
+              setShowTutorial(false);
+            });
+          });
+        }
       });
     });
 
@@ -103,9 +113,11 @@ class _MyHomePageState extends State<MyHomePage>
         newPosts: igUserPosts,
       );
 
-      setState(() {
-        homePageState['posts'] = output;
-      });
+      if (this.mounted) {
+        setState(() {
+          homePageState['posts'] = output;
+        });
+      }
     }
   }
 
@@ -174,17 +186,14 @@ class _MyHomePageState extends State<MyHomePage>
   Widget _tutorialOverlay() {
     print('height: $height');
     print('width $width');
-    return Opacity(
-      opacity: 1,
-      child: Container(
-        color: const Color(0x33ffffff),
-        child: Transform.translate(
-          offset: Offset(0.0, animation.value),
-          child: Icon(
-            Icons.arrow_upward,
-            size: 128.0,
-            color: Colors.green,
-          ),
+    return Container(
+      color: const Color(0x33ffffff),
+      child: Transform.translate(
+        offset: Offset(0.0, animation.value),
+        child: Icon(
+          Icons.arrow_upward,
+          size: 128.0,
+          color: Colors.green,
         ),
       ),
     );
@@ -257,63 +266,68 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: getBackgroundColor(),
-      appBar: 'Best of Memes 🔥'
-          .toAppBar(centerTitle: true, textColor: getTextColor()),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Visibility(
-            visible: true,
-            child: InkWell(
-              onDoubleTap: () {
-                setState(() {
-                  String currentTheme = homePageState['theme'];
-                  if (currentTheme == 'dark') {
-                    homePageState['theme'] = 'light';
-                  } else {
-                    homePageState['theme'] = 'dark';
-                  }
-                });
-              },
-              child: _getBody(),
-            ),
-          ),
-          Visibility(
-            visible: true,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  'Powered by'.lightText(
-                      fontSize: 20.0, textColor: getLightTextColor()),
-                  Padding(padding: EdgeInsets.all(4.0)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Scaffold(
+          backgroundColor: getBackgroundColor(),
+          appBar: 'Best of Memes 🔥'
+              .toAppBar(centerTitle: true, textColor: getTextColor()),
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              Visibility(
+                visible: true,
+                child: InkWell(
+                  onDoubleTap: () {
+                    setState(() {
+                      String currentTheme = homePageState['theme'];
+                      if (currentTheme == 'dark') {
+                        homePageState['theme'] = 'light';
+                      } else {
+                        homePageState['theme'] = 'dark';
+                      }
+                    });
+                  },
+                  child: _getBody(),
+                ),
+              ),
+              Visibility(
+                visible: true,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Image(
-                        image: AssetImage('images/instagram.png'),
-                        width: 16.0,
-                        height: 16.0,
+                      'Powered by'.lightText(
+                          fontSize: 20.0, textColor: getLightTextColor()),
+                      Padding(padding: EdgeInsets.all(4.0)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image(
+                            image: AssetImage('images/instagram.png'),
+                            width: 16.0,
+                            height: 16.0,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(4.0),
+                          ),
+                          'Instagram'.lightText(
+                              fontSize: 12.0, textColor: getLightTextColor()),
+                        ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(4.0),
-                      ),
-                      'Instagram'.lightText(
-                          fontSize: 12.0, textColor: getLightTextColor()),
+                      Padding(padding: EdgeInsets.all(16.0))
                     ],
                   ),
-                  Padding(padding: EdgeInsets.all(16.0))
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-          if (homePageState['showTutorial']) _tutorialOverlay(),
-        ],
-      ),
-      floatingActionButton: _getActions(),
+          floatingActionButton: _getActions(),
+        ),
+        if (homePageState['showTutorial']) _tutorialOverlay(),
+      ],
     );
   }
 }
