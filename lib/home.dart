@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'splash.dart';
 import 'rest.dart';
+import 'posts_helper.dart';
 import 'extensions/global_ext.dart';
 import 'package:share/share.dart';
 
@@ -50,15 +51,24 @@ class _MyHomePageState extends State<MyHomePage> {
       'theme': 'dark'
     };
 
-    // we just have 24 posts, push more posts here.
-    List<String> userList = getRestIGUsersList();
+    _lazyLoadPosts();
+  }
 
-    getPosts(userList: userList).then((posts) {
-      setState(() {
-        List<Post> currentPosts = homePageState['posts'];
-        homePageState['posts'] = currentPosts + posts;
-      });
-    });
+  Future<void> _lazyLoadPosts() async {
+    List<String> userList = getIGUsersList();
+
+    for (var igUser in userList) {
+        List<Post> igUserPosts = await getPosts(userList: [igUser]);
+        List<Post> output = await mergePostsByTime(
+          currentIndex: homePageState['index'],
+          currentPosts: homePageState['posts'],
+          newPosts: igUserPosts,
+        );
+
+        setState(() {
+          homePageState['posts'] = output;
+        });
+    }
   }
 
   void updateIndex(DismissDirection direction) {

@@ -8,22 +8,24 @@ const SUFFIX = "?__a=1";
 
 // TODO: add post account image, name, link to instagram methods
 
-List<String> getIGUsersList() {
-  return [
-    'official.desimeme',
-    'theironicalbaba',
-  ];
+String firstIgUser() {
+  return 'theironicalbaba';
 }
 
-List<String> getRestIGUsersList() {
-  return [
+List<String> getIGUsersList() {
+  List<String> igUsers = [
+    'official.desimeme',
+    'thememebaba',
+    'thedesifeed.in',
+    'memes.point',
+    'indian.tweets',
     'sarcastic_us',
     'bewakoofofficial',
     'thedopeindian',
     'thedesistuff',
     'diddle.app',
-    'thememebaba',
   ];
+  return igUsers;
 }
 
 extension on int {
@@ -33,15 +35,11 @@ extension on int {
 }
 
 Future<List<Post>> getPosts({List<String> userList}) async {
-  if (userList == null) {
-    userList = getIGUsersList();
-  }
+  assert(userList != null);
+  assert(userList.isNotEmpty);
   List<Post> globalPosts = [];
 
   for (var user in userList) {
-
-    // randomly shuffle posts.
-    globalPosts.shuffle();
 
     String url = '$BASE_URL/$user/$SUFFIX';
     print('get request on url: $url');
@@ -64,12 +62,14 @@ Future<List<Post>> getPosts({List<String> userList}) async {
         bool isVideo = node['is_video'];
 
         String shareCode = node['shortcode'];
+        int timestamp = node['taken_at_timestamp'];
 
         if (!isVideo) {
           Post post = Post(
               imageLink: node['display_url'],
               username: username,
               shareCode: shareCode,
+              timestamp: timestamp,
               userProfileImageLink: userProfileImageLink,
               likedCount: node['edge_liked_by']['count'],
               thumbnail: node['thumbnail_src']);
@@ -81,7 +81,6 @@ Future<List<Post>> getPosts({List<String> userList}) async {
     }
   }
 
-  globalPosts.shuffle();
   return globalPosts;
 }
 
@@ -90,6 +89,7 @@ class Post {
   String thumbnail;
   String username;
   String userProfileImageLink;
+  int timestamp;
   String caption;
   int likedCount;
   String shareCode;
@@ -99,6 +99,7 @@ class Post {
     @required this.username,
     @required this.userProfileImageLink,
     @required this.shareCode,
+    @required this.timestamp,
     this.caption,
     this.likedCount,
     this.thumbnail,
@@ -111,6 +112,7 @@ class Post {
       'thumbnail': thumbnail,
       'username': username,
       'shareCode': shareCode,
+      'timestamp': timestamp,
       'userProfileImageLink': userProfileImageLink,
       'caption': caption,
       'likedCount': likedCount,
