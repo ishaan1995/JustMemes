@@ -4,6 +4,7 @@ import 'rest.dart';
 import 'posts_helper.dart';
 import 'extensions/global_ext.dart';
 import 'package:share/share.dart';
+import 'device_spec.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, @required this.posts}) : super(key: key);
@@ -14,8 +15,13 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   Map<String, dynamic> homePageState;
+  double height;
+  double width;
+  AnimationController controller;
+  Animation<double> animation;
 
   Color getBackgroundColor() {
     if (homePageState['theme'] == 'dark') {
@@ -45,10 +51,42 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
+    height = deviceSpec.height;
+    width = deviceSpec.width;
+
+    controller =
+        new AnimationController(duration: Duration(seconds: 2), vsync: this)
+          ..addListener(() {
+            setState(() {});
+          });
+    animation = Tween(begin: 256.0, end: -256.0).animate(
+      new CurvedAnimation(
+        parent: controller,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        homePageState['showTutorial'] = true;
+      });
+      controller.repeat(period: Duration(seconds: 2));
+    });
+
+    Future.delayed(Duration(seconds: 8), () {
+      controller.forward(from: 0);
+      controller.stop(canceled: true);
+
+      setState(() {
+        homePageState['showTutorial'] = false;
+      });
+    });
+
     homePageState = {
       'index': 0,
       'posts': widget.posts,
-      'theme': 'dark'
+      'theme': 'dark',
+      'showTutorial': false,
     };
 
     _lazyLoadPosts();
@@ -58,16 +96,16 @@ class _MyHomePageState extends State<MyHomePage> {
     List<String> userList = getIGUsersList();
 
     for (var igUser in userList) {
-        List<Post> igUserPosts = await getPosts(userList: [igUser]);
-        List<Post> output = await mergePostsByTime(
-          currentIndex: homePageState['index'],
-          currentPosts: homePageState['posts'],
-          newPosts: igUserPosts,
-        );
+      List<Post> igUserPosts = await getPosts(userList: [igUser]);
+      List<Post> output = await mergePostsByTime(
+        currentIndex: homePageState['index'],
+        currentPosts: homePageState['posts'],
+        newPosts: igUserPosts,
+      );
 
-        setState(() {
-          homePageState['posts'] = output;
-        });
+      setState(() {
+        homePageState['posts'] = output;
+      });
     }
   }
 
@@ -121,7 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
               int index = homePageState['index'];
               Post post = homePageState['posts'][index];
               String link = 'https://instagram.com/p/${post.shareCode}/';
-              String shareMessage = "Look at this meme at $link.\n\n Shared By FunnyMemes.";
+              String shareMessage =
+                  "Look at this meme at $link.\n\n Shared By FunnyMemes.";
               Share.share(shareMessage);
             },
             tooltip: 'Share',
@@ -129,6 +168,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _tutorialOverlay() {
+    print('height: $height');
+    print('width $width');
+    return Opacity(
+      opacity: 1,
+      child: Container(
+        color: const Color(0x33ffffff),
+        child: Transform.translate(
+          offset: Offset(0.0, animation.value),
+          child: Icon(
+            Icons.arrow_upward,
+            size: 128.0,
+            color: Colors.green,
+          ),
+        ),
+      ),
     );
   }
 
@@ -201,46 +259,58 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: getBackgroundColor(),
-      appBar: 'Best of Memes 🔥'.toAppBar(centerTitle: true, textColor: getTextColor()),
+      appBar: 'Best of Memes 🔥'
+          .toAppBar(centerTitle: true, textColor: getTextColor()),
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          InkWell(
-            onDoubleTap: () {
-              setState(() {
-                String currentTheme = homePageState['theme'];
-                if (currentTheme == 'dark') {
-                  homePageState['theme'] = 'light';
-                } else {
-                  homePageState['theme'] = 'dark';
-                }
-                
-              });
-            },
-            child: _getBody(),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                'Powered by'.lightText(fontSize: 20.0, textColor: getLightTextColor()),
-                Padding(padding: EdgeInsets.all(4.0)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image(
-                      image: AssetImage('images/instagram.png'),
-                      width: 16.0,
-                      height: 16.0,
-                    ),
-                    Padding(padding: EdgeInsets.all(4.0),),
-                    'Instagram'.lightText(fontSize: 12.0, textColor: getLightTextColor()),
-                  ],
-                ),
-                Padding(padding: EdgeInsets.all(16.0))
-              ],
+          Visibility(
+            visible: true,
+            child: InkWell(
+              onDoubleTap: () {
+                setState(() {
+                  String currentTheme = homePageState['theme'];
+                  if (currentTheme == 'dark') {
+                    homePageState['theme'] = 'light';
+                  } else {
+                    homePageState['theme'] = 'dark';
+                  }
+                });
+              },
+              child: _getBody(),
             ),
-          )
+          ),
+          Visibility(
+            visible: true,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  'Powered by'.lightText(
+                      fontSize: 20.0, textColor: getLightTextColor()),
+                  Padding(padding: EdgeInsets.all(4.0)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image(
+                        image: AssetImage('images/instagram.png'),
+                        width: 16.0,
+                        height: 16.0,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(4.0),
+                      ),
+                      'Instagram'.lightText(
+                          fontSize: 12.0, textColor: getLightTextColor()),
+                    ],
+                  ),
+                  Padding(padding: EdgeInsets.all(16.0))
+                ],
+              ),
+            ),
+          ),
+          if (homePageState['showTutorial']) _tutorialOverlay(),
         ],
       ),
       floatingActionButton: _getActions(),

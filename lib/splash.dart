@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'device_spec.dart';
 import 'home.dart';
 import 'rest.dart';
 
@@ -57,6 +58,7 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
+    setDeviceSpec(context);
     bool isError = splashState['isError'];
 
     TextStyle errorTextStyle = TextStyle(
