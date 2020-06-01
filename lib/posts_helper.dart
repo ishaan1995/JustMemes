@@ -8,9 +8,9 @@ extension Sort on List<Post> {
       throw Exception('Not supported orderby on field: $field');
     }
     if (desc) {
-      this.sort((User p1, User p2) => p2.timestamp.compareTo(p1.timestamp));
+      this.sort((Post p1, Post p2) => p2.timestamp.compareTo(p1.timestamp));
     } else {
-      this.sort((User p1, User p2) => p1.timestamp.compareTo(p2.timestamp));
+      this.sort((Post p1, Post p2) => p1.timestamp.compareTo(p2.timestamp));
     }
   }
 }
