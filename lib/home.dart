@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage>
         if (showTutorial == true) {
           controller.repeat(period: Duration(seconds: 2));
 
-          Future.delayed(Duration(seconds: 8), () {
+          Future.delayed(Duration(seconds: 6), () {
             controller.forward(from: 0);
             controller.stop(canceled: true);
 
