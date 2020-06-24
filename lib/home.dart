@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'splash.dart';
 import 'rest.dart';
 import 'posts_helper.dart';
 import 'extensions/global_ext.dart';
 import 'package:share/share.dart';
 import 'device_spec.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, @required this.posts}) : super(key: key);
@@ -67,11 +69,9 @@ class _MyHomePageState extends State<MyHomePage>
     );
 
     showTutorial().then((showTutorial) {
-
       print('should show tutorial $showTutorial');
 
       Future.delayed(Duration(seconds: 2), () {
-
         setState(() {
           homePageState['showTutorial'] = showTutorial;
         });
@@ -118,6 +118,14 @@ class _MyHomePageState extends State<MyHomePage>
           homePageState['posts'] = output;
         });
       }
+    }
+  }
+
+  Future<void> _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -173,10 +181,14 @@ class _MyHomePageState extends State<MyHomePage>
               String link = 'https://instagram.com/p/${post.shareCode}/';
               String shareMessage =
                   "Look at this meme at $link.\n\n Shared By FunnyMemes.";
-              Share.share(shareMessage);
+              if (kIsWeb) {
+                _launchURL(link);
+              } else {
+                Share.share(shareMessage);
+              }
             },
             tooltip: 'Share',
-            child: Icon(Icons.share),
+            child: Icon(kIsWeb ? Icons.open_in_new: Icons.share),
           ),
         ),
       ],

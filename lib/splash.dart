@@ -26,22 +26,24 @@ class _SplashPageState extends State<SplashPage> {
   void fetchPosts() {
     setState(() {
       splashState = {
-          'isLoading': true,
-          'isError': false,
-          'posts': [],
-        };
+        'isLoading': true,
+        'isError': false,
+        'posts': [],
+      };
     });
 
     getPosts(userList: [firstIgUser()]).then((posts) {
       navigateWithPosts(context, posts);
     }).catchError((onError) {
-      setState(() {
-        splashState = {
-          'isLoading': false,
-          'isError': true,
-          'posts': [],
-        };
-      });
+      if (this.mounted) {
+        setState(() {
+          splashState = {
+            'isLoading': false,
+            'isError': true,
+            'posts': [],
+          };
+        });
+      }
     });
   }
 
@@ -76,7 +78,10 @@ class _SplashPageState extends State<SplashPage> {
                     'Something went wrong.',
                     style: errorTextStyle,
                   ),
-                  Padding(padding: EdgeInsets.all(8.0,)),
+                  Padding(
+                      padding: EdgeInsets.all(
+                    8.0,
+                  )),
                   FlatButton(
                     onPressed: fetchPosts,
                     textTheme: ButtonTextTheme.accent,
