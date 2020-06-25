@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:funny_memes/info.dart';
 import 'splash.dart';
 import 'rest.dart';
 import 'posts_helper.dart';
@@ -188,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage>
               }
             },
             tooltip: 'Share',
-            child: Icon(kIsWeb ? Icons.open_in_new: Icons.share),
+            child: Icon(kIsWeb ? Icons.open_in_new : Icons.share),
           ),
         ),
       ],
@@ -196,8 +197,6 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Widget _tutorialOverlay() {
-    print('height: $height');
-    print('width $width');
     return Container(
       color: const Color(0x33ffffff),
       child: Transform.translate(
@@ -276,6 +275,39 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
+  void showInfo(BuildContext context) {
+    print('Move to info page');
+
+    var route = MaterialPageRoute(builder: (context) {
+      return InfoPage();
+    });
+
+    Navigator.of(context).push(route);
+  }
+
+  Widget body({bool themeToggle = false}) {
+    if (themeToggle) {
+      return Visibility(
+        visible: true,
+        child: InkWell(
+          onDoubleTap: () {
+            setState(() {
+              String currentTheme = homePageState['theme'];
+              if (currentTheme == 'dark') {
+                homePageState['theme'] = 'light';
+              } else {
+                homePageState['theme'] = 'dark';
+              }
+            });
+          },
+          child: _getBody(),
+        ),
+      );
+    } else {
+      return _getBody();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -283,27 +315,17 @@ class _MyHomePageState extends State<MyHomePage>
       children: [
         Scaffold(
           backgroundColor: getBackgroundColor(),
-          appBar: 'Best of Memes 🔥'
-              .toAppBar(centerTitle: true, textColor: getTextColor()),
+          appBar: 'Best of Memes 🔥'.toAppBar(
+            centerTitle: true,
+            textColor: getTextColor(),
+            titleClick: () {
+              showInfo(context);
+            },
+          ),
           body: Stack(
             fit: StackFit.expand,
             children: [
-              Visibility(
-                visible: true,
-                child: InkWell(
-                  onDoubleTap: () {
-                    setState(() {
-                      String currentTheme = homePageState['theme'];
-                      if (currentTheme == 'dark') {
-                        homePageState['theme'] = 'light';
-                      } else {
-                        homePageState['theme'] = 'dark';
-                      }
-                    });
-                  },
-                  child: _getBody(),
-                ),
-              ),
+              body(themeToggle: false),
               Visibility(
                 visible: true,
                 child: Align(
@@ -311,8 +333,15 @@ class _MyHomePageState extends State<MyHomePage>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      'Powered by'.lightText(
-                          fontSize: 20.0, textColor: getLightTextColor()),
+                      InkWell(
+                        onTap: () {
+                          showInfo(context);
+                        },
+                        child: 'Powered by'.lightText(
+                          fontSize: 20.0,
+                          textColor: getLightTextColor(),
+                        ),
+                      ),
                       Padding(padding: EdgeInsets.all(4.0)),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
