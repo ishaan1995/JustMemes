@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 extension GlobalAppExt on String {
-  AppBar toAppBar({bool centerTitle = true, Color textColor = Colors.black}) {
+  AppBar toAppBar({bool centerTitle = true, Color textColor = Colors.black, Function titleClick,}) {
     return AppBar(
-        centerTitle: centerTitle,
-        title: Text(
+      centerTitle: centerTitle,
+      title: InkWell(
+        onTap: titleClick,
+        child: Text(
           this,
           style: TextStyle(
               color: textColor,
@@ -12,19 +14,18 @@ extension GlobalAppExt on String {
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-      );
+      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0.0,
+    );
   }
 
   Text lightText({double fontSize = 16.0, Color textColor = Colors.grey}) {
     return Text(
-          this,
-          style: TextStyle(
-              color: textColor,
-              fontSize: fontSize,
-              fontStyle: FontStyle.italic),
-        );
+      this,
+      style: TextStyle(
+          color: textColor, fontSize: fontSize, fontStyle: FontStyle.italic),
+    );
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'device_spec.dart';
 import 'splash.dart';
 
 void main() async {
