@@ -1,5 +1,6 @@
 # Just Memes
 [![Netlify Status](https://api.netlify.com/api/v1/badges/cea2d4c8-9aff-487d-99e2-a7e78cc2a534/deploy-status)](https://app.netlify.com/sites/funnymemes/deploys)
+[![Codemagic build status](https://api.codemagic.io/apps/5c817a6e767952001df7085c/5c817a6e767952001df7085b/status_badge.svg)](https://codemagic.io/apps/5c817a6e767952001df7085c/5c817a6e767952001df7085b/latest_build)
 
 Best of insta memes.
 
