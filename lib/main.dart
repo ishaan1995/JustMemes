@@ -7,8 +7,13 @@ void main() async {
   /// setup binding to call native method calls before `runApp` is called.
   /// issue detected in flutter: 1.9.6-pre.60
   /// read more [https://api.flutter.dev/flutter/widgets/WidgetsFlutterBinding/ensureInitialized.html]
-  /// WidgetsFlutterBinding.ensureInitialized();
   ///
+  WidgetsFlutterBinding.ensureInitialized();
+  await setPlatformInfo();
+  print('platform info is: $platformInfo');
+  appConfig = await getConfig();
+  print('appConfig is .......');
+  print(appConfig);
   runApp(MyApp());
 }
 

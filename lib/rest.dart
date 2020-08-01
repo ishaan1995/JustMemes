@@ -6,6 +6,41 @@ import 'dart:convert';
 const BASE_URL = "https://www.instagram.com";
 const SUFFIX = "?__a=1";
 
+Map<String, dynamic> getDefaultConfig() {
+  return {
+    "appVersion": {
+      "minimum": 5,
+      "current": 5,
+    },
+    "outage": {
+      "showMaintenancePage": false,
+    },
+    "share": {
+      "prefix": "Look at this meme",
+      "suffix": "Shared by Funny Memes 😂",
+      "appPrefix": "Download the app from: ",
+      "appLink":
+          "https://play.google.com/store/apps/details?id=com.nextgenkiapp.funnymemes",
+      "showAppLink": true
+    }
+  };
+}
+
+Future<Map<String, dynamic>> getAppConfig() async {
+  var url = "https://funnymemes.nextgenki.workers.dev/config";
+  print('fetching app config........');
+  var response = await http.get(url);
+  int statusCode = response.statusCode;
+
+  if (statusCode.success()) {
+    print('fetched app config........');
+    Map<String, dynamic> jsonData = json.decode(response.body);
+    return jsonData;
+  } else {
+    return null;
+  }
+}
+
 // TODO: add post account image, name, link to instagram methods
 
 String firstIgUser() {
@@ -40,7 +75,6 @@ Future<List<Post>> getPosts({List<String> userList}) async {
   List<Post> globalPosts = [];
 
   for (var user in userList) {
-
     String url = '$BASE_URL/$user/$SUFFIX';
     print('get request on url: $url');
     var response = await http.get(url);

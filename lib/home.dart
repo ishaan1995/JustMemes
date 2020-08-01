@@ -180,12 +180,22 @@ class _MyHomePageState extends State<MyHomePage>
               int index = homePageState['index'];
               Post post = homePageState['posts'][index];
               String link = 'https://instagram.com/p/${post.shareCode}/';
-              String shareMessage =
-                  "Look at this meme at $link.\n\n Shared By FunnyMemes.";
+
+              var prefix = appConfig['share']['prefix'];
+              var suffix = appConfig['share']['suffix'];
+              var appLink = appConfig['share']['appLink'];
+              var shouldAppLink = appConfig['share']['showAppLink'];
+              var appPrefix = appConfig['share']['appPrefix'];
+
+              var message = "$prefix\n$link\n\n$suffix";
+              if (shouldAppLink) {
+                message += "\n\n$appPrefix$appLink";
+              }
+
               if (kIsWeb) {
                 _launchURL(link);
               } else {
-                Share.share(shareMessage);
+                Share.share(message);
               }
             },
             tooltip: 'Share',

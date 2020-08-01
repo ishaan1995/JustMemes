@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:funny_memes/rest.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'device_spec.dart';
 
 class InfoPage extends StatelessWidget {
-
   // TODO: add support for themes later on
   bool darkTheme = true;
 
@@ -85,13 +85,22 @@ class InfoPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                'Best of Memes 🔥',
-                style: h1Style,
+              InkWell(
+                onTap: () {
+                  if (appConfig.containsKey('share') &&
+                      appConfig['share']['appLink'] != null) {
+                    String link = appConfig['share']['appLink'];
+                    _launchURL(link);
+                  }
+                },
+                child: Text(
+                  'Best of Memes 🔥',
+                  style: h1Style,
+                ),
               ),
               Padding(padding: EdgeInsets.all(4.0)),
               Text(
-                'v0.3 (5)',
+                'v${platformInfo.version} (${platformInfo.buildNumber})',
                 style: h2Style,
               ),
               Divider(

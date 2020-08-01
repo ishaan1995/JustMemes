@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'deprecated.dart';
 import 'device_spec.dart';
 import 'home.dart';
 import 'rest.dart';
@@ -23,6 +24,19 @@ class _SplashPageState extends State<SplashPage> {
     fetchPosts();
   }
 
+  bool requireskMaintenance() {
+    return appConfig.containsKey('outage') &&
+        (appConfig['outage']['showMaintenancePage'] as bool);
+  }
+
+  bool hasDeprecation() {
+    if (true) {
+      return true;
+    }
+    int minimumVersion = appConfig['appVersion']['minimum'];
+    return minimumVersion > platformInfo.buildNumber;
+  }
+
   void fetchPosts() {
     setState(() {
       splashState = {
@@ -31,6 +45,24 @@ class _SplashPageState extends State<SplashPage> {
         'posts': [],
       };
     });
+
+    if (requireskMaintenance()) {
+      // go to maintenance page
+      return;
+    }
+
+    if (hasDeprecation()) {
+      Future.delayed(Duration(seconds: 1)).then((value) {
+        // go to deprecated page.
+        var route = MaterialPageRoute(builder: (context) {
+          return DeprecationPage();
+        });
+
+        Navigator.of(context)
+            .pushAndRemoveUntil(route, (Route<dynamic> route) => false);
+      });
+      return;
+    }
 
     getPosts(userList: [firstIgUser()]).then((posts) {
       navigateWithPosts(context, posts);
