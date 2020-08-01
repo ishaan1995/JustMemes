@@ -30,9 +30,6 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   bool hasDeprecation() {
-    if (true) {
-      return true;
-    }
     int minimumVersion = appConfig['appVersion']['minimum'];
     return minimumVersion > platformInfo.buildNumber;
   }
