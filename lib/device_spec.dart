@@ -42,8 +42,8 @@ Future<bool> shouldFetchConfig() async {
   // fetch config once every 6 hours.
   // 1 sec = 1000 millis
   // 1 hrs = 60 mins = 60 * 60 seconds
-  //const HOURS_6_MILLIS = 1000 * 60 * 60 * 6;
-  const HOURS_6_MILLIS = 1000 * 30; // 30 seconds
+  const HOURS_6_MILLIS = 1000 * 60 * 60 * 6;
+  //const HOURS_6_MILLIS = 1000 * 30; // 30 seconds
   return (currentTime - lastFetchedTime) > HOURS_6_MILLIS;
 }
 
@@ -89,11 +89,6 @@ Future<Map<String, dynamic>> getConfig() async {
 
 Future<void> setPlatformInfo() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-  String appName = packageInfo.appName;
-  String packageName = packageInfo.packageName;
-  String version = packageInfo.version;
-  String buildNumber = packageInfo.buildNumber;
 
   platformInfo = PlatformInfo(
     appName: packageInfo.appName,

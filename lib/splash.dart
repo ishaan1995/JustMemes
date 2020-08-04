@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'deprecated.dart';
 import 'device_spec.dart';
 import 'home.dart';
+import 'maintenance.dart';
 import 'rest.dart';
 
 class SplashPage extends StatefulWidget {
@@ -44,7 +43,16 @@ class _SplashPageState extends State<SplashPage> {
     });
 
     if (requireskMaintenance()) {
-      // go to maintenance page
+      Future.delayed(Duration(seconds: 1)).then((value) {
+        // go to deprecated page.
+        var route = MaterialPageRoute(builder: (context) {
+          return MaintenancePage();
+        });
+
+        Navigator.of(context)
+            .pushAndRemoveUntil(route, (Route<dynamic> route) => false);
+      });
+
       return;
     }
 
